@@ -6,29 +6,29 @@
 #    By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/21 17:41:06 by aahrach           #+#    #+#              #
-#    Updated: 2023/02/21 17:52:16 by aahrach          ###   ########.fr        #
+#    Updated: 2023/02/23 22:39:11 by aahrach          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRC = main.c philo.c ft_atoi.c 
+SRC = main.c philo.c
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 
 CC = gcc
 
-all = $(NAME)
+all : $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME) #-fsanitize=thread
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 clean:
 	rm -f $(OBJ)
 
-fclean: clean
+fclean : clean
 	rm -f $(NAME)
 
-re: fclean all
+re : fclean all
