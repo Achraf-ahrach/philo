@@ -6,7 +6,7 @@
 /*   By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 16:00:09 by aahrach           #+#    #+#             */
-/*   Updated: 2023/02/23 20:22:41 by aahrach          ###   ########.fr       */
+/*   Updated: 2023/03/06 22:09:39 by aahrach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-// typedef struct s_mutex{
-// 	pthread_mutex_t		m;
-// }	t_mutex;
+# define RED "\033[0;31m"
 
-//pthread_mutex_t		m;
+typedef struct s_print{
+	pthread_mutex_t		print;
+	pthread_mutex_t		luck;
+}	t_print;
 
 typedef struct s_inf{
 	int					time_to_die;
@@ -36,14 +37,14 @@ typedef struct s_inf{
 	long int			last_sleep;
 	int					nbr_f;
 	int					ac;
-	pthread_mutex_t		*mutex_a;
+	t_print				*print;
 	int					nbr_eat;
 	pthread_mutex_t		*mutex;
 }	t_inf;
 
-void		print_(char *str, t_inf *infrm);
+void		print_(char *str, t_inf *infrm, int i);
 int			ft_atoi(char *str);
 long int	time_(void);
-void		initialize(t_inf *infrm, char **av, int ac, pthread_mutex_t *m);
+void		initialize(t_inf *infrm, char **av, int ac,	t_print *print);
 int			check_die(t_inf *inf);
 #endif

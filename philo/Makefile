@@ -6,7 +6,7 @@
 #    By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/21 17:41:06 by aahrach           #+#    #+#              #
-#    Updated: 2023/02/23 22:39:11 by aahrach          ###   ########.fr        #
+#    Updated: 2023/03/06 23:11:57 by aahrach          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ SRC = main.c philo.c
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g3
 
-CC = gcc
+CC = cc
 
 all : $(NAME)
 

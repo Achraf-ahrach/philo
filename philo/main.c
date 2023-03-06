@@ -6,7 +6,7 @@
 /*   By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:59:51 by aahrach           #+#    #+#             */
-/*   Updated: 2023/02/23 22:44:33 by aahrach          ###   ########.fr       */
+/*   Updated: 2023/03/06 23:10:53 by aahrach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ void	ft_helpe(t_inf	*infrm)
 	infrm->last_sleep = time_();
 	while (time_() - infrm->last_sleep < infrm->time_to_sleep)
 		usleep(100);
-	print_("is thinking", infrm);
+	print_("is thinking", infrm, 0);
+
 }
 
 void	*ft_function(void	*inf)
@@ -57,22 +58,22 @@ void	*ft_function(void	*inf)
 	while (1)
 	{
 		pthread_mutex_lock(&infrm->mutex[infrm->index]);
-		print_("has taken a fork", infrm);
+		print_("has taken a fork", infrm, 0);
 		pthread_mutex_lock(&infrm->mutex[(infrm->index + 1) % infrm->nbr_f]);
-		print_("has taken a fork", infrm);
+		print_("has taken a fork", infrm, 0);
+		print_("is eating", infrm, 0);
+		pthread_mutex_lock(&infrm[0].print->luck);
+		infrm->last_meal = time_();
 		if (infrm->nbr_eat > 0)
 			infrm->nbr_eat--;
-		print_("is eating", infrm);
-		pthread_mutex_lock(infrm->mutex_a);
-		infrm->last_meal = time_();
-		pthread_mutex_unlock(infrm->mutex_a);
+		pthread_mutex_unlock(&infrm[0].print->luck);
 		while (time_() - infrm->last_meal < infrm->time_to_eat)
 			usleep(100);
 		pthread_mutex_unlock(&infrm->mutex[infrm->index]);
 		pthread_mutex_unlock(&infrm->mutex[(infrm->index + 1) % infrm->nbr_f]);
 		if (infrm->nbr_eat == 0)
 			return (NULL);
-		print_("is sleeping", infrm);
+		print_("is sleeping", infrm, 0);
 		ft_helpe(infrm);
 	}
 	return (NULL);
@@ -108,7 +109,7 @@ int	main(int ac, char **av)
 {
 	pthread_t		*th;
 	t_inf			*infrm;
-	pthread_mutex_t	m;
+	t_print			*print;
 	int				i;
 
 	if (ac < 5 || ac > 6)
@@ -122,11 +123,14 @@ int	main(int ac, char **av)
 		return (0);
 	th = malloc(ft_atoi(av[1]) * sizeof(pthread_t));
 	infrm = malloc(ft_atoi(av[1]) * sizeof(t_inf));
-	pthread_mutex_init(&m, NULL);
-	initialize(infrm, av, ac, &m);
+	print = malloc(sizeof(t_print));
+	pthread_mutex_init(&print->luck, NULL);
+	pthread_mutex_init(&print->print, NULL);
+	initialize(infrm, av, ac, print);
 	i = -1;
 	while (++i < ft_atoi(av[1]))
 		pthread_mutex_init(&(infrm + i)->mutex[i], NULL);
 	creat_philo(infrm, th);
 	check_die(infrm);
+	return (0);
 }

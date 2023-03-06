@@ -6,7 +6,7 @@
 /*   By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 13:34:18 by aahrach           #+#    #+#             */
-/*   Updated: 2023/02/23 22:27:59 by aahrach          ###   ########.fr       */
+/*   Updated: 2023/03/06 22:55:33 by aahrach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,21 @@ int	ft_atoi(char *str)
 	return (nbr);
 }
 
-void	print_(char *str, t_inf *infrm)
+void	print_(char *str, t_inf *infrm, int i)
 {
-	pthread_mutex_lock(infrm->mutex_a);
-	printf("%ld ms %d %s\n", time_() - infrm->time_creat, \
-		infrm->index + 1, str);
-	pthread_mutex_unlock(infrm->mutex_a);
+	pthread_mutex_lock(&infrm->print->print);
+	if (i == 1)
+	{
+		printf("%s%ld ms %d died\n", RED, time_() - infrm->time_creat, \
+				infrm->index + 1);
+		return ;
+	}
+	else
+	{
+		printf("%ld ms %d %s\n", time_() - infrm->time_creat, \
+			infrm->index + 1, str);
+	}
+	pthread_mutex_unlock(&infrm->print->print);
 }
 
 long int	time_(void)
@@ -51,7 +60,7 @@ long int	time_(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	initialize(t_inf *infrm, char **av, int ac,	pthread_mutex_t *m)
+void	initialize(t_inf *infrm, char **av, int ac,	t_print *print)
 {
 	pthread_mutex_t	*forks;
 	long int		time_of_creat;
@@ -62,16 +71,16 @@ void	initialize(t_inf *infrm, char **av, int ac,	pthread_mutex_t *m)
 	forks = malloc(ft_atoi(av[1]) * sizeof(pthread_mutex_t));
 	while (i < ft_atoi(av[1]))
 	{
-		(infrm + i)->time_of_day = time_();
-		(infrm + i)->time_to_die = ft_atoi(av[2]);
-		(infrm + i)->time_to_eat = ft_atoi(av[3]);
-		(infrm + i)->time_to_sleep = ft_atoi(av[4]);
-		(infrm + i)->index = i;
-		(infrm + i)->nbr_eat = ft_atoi(av[5]);
-		(infrm + i)->nbr_f = ft_atoi(av[1]);
-		(infrm + i)->ac = ac;
-		(infrm + i)->mutex = forks;
-		(infrm + i)->mutex_a = m;
+		infrm[i].time_of_day = time_();
+		infrm[i].time_to_die = ft_atoi(av[2]);
+		infrm[i].time_to_eat = ft_atoi(av[3]);
+		infrm[i].time_to_sleep = ft_atoi(av[4]);
+		infrm[i].index = i;
+		infrm[i].nbr_eat = ft_atoi(av[5]);
+		infrm[i].nbr_f = ft_atoi(av[1]);
+		infrm[i].ac = ac;
+		infrm[i].mutex = forks;
+		infrm[i].print = print;
 		i++;
 	}
 }
@@ -87,19 +96,17 @@ int	check_die(t_inf *inf)
 		j = 0;
 		while (++i < inf[0].nbr_f)
 		{
-			pthread_mutex_lock(inf->mutex_a);
+			pthread_mutex_lock(&inf[0].print->luck);
 			if (inf[i].ac == 6 && inf[i].nbr_eat == 0)
 				j++;
 			if (j == inf[i].nbr_f)
 				return (0);
 			if (time_() - inf[i].last_meal >= inf[i].time_to_die)
 			{
-				pthread_mutex_unlock(inf->mutex_a);
-				printf("%ld ms %d died\n", time_() - inf->time_creat, \
-					inf->index + 1);
+				print_("", inf, 1);
 				return (0);
 			}
-			pthread_mutex_unlock(inf->mutex_a);
+			pthread_mutex_unlock(&inf[0].print->luck);
 		}
 	}
 	return (0);
