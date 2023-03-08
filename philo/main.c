@@ -6,7 +6,7 @@
 /*   By: aahrach <aahrach@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/16 15:59:51 by aahrach           #+#    #+#             */
-/*   Updated: 2023/03/06 23:10:53 by aahrach          ###   ########.fr       */
+/*   Updated: 2023/03/08 10:17:57 by aahrach          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ void	ft_helpe(t_inf	*infrm)
 	while (time_() - infrm->last_sleep < infrm->time_to_sleep)
 		usleep(100);
 	print_("is thinking", infrm, 0);
-
 }
 
 void	*ft_function(void	*inf)
@@ -132,5 +131,4 @@ int	main(int ac, char **av)
 		pthread_mutex_init(&(infrm + i)->mutex[i], NULL);
 	creat_philo(infrm, th);
 	check_die(infrm);
-	return (0);
 }
